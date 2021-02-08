@@ -1,40 +1,25 @@
 const path = require('path');
+const process = require('process');
 const webpack = require('webpack');
 
-
-
-
-/*
- * We've enabled MiniCssExtractPlugin for you. This allows your app to
- * use css modules that will be moved into a separate CSS file instead of inside
- * one of your module entries!
- *
- * https://github.com/webpack-contrib/mini-css-extract-plugin
- *
- */
-
+// https://github.com/jantimon/html-webpack-plugin
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+// https://github.com/webpack-contrib/mini-css-extract-plugin
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
+const FileManagerPlugin = require('filemanager-webpack-plugin');
 
+const VersionFilePlugin = require('webpack-version-file');
 
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ObfuscatorPlugin = require('webpack-obfuscator');
 
-
-
-
-/*
- * We've enabled HtmlWebpackPlugin for you! This generates a html
- * page for you when you compile webpack, which will make you start
- * developing and prototyping faster.
- *
- * https://github.com/jantimon/html-webpack-plugin
- *
- */
+const { env } = process;
 
 module.exports = {
 
-  mode: 'development',
+  mode: env.NODE_ENV || 'development',
 
   entry: {
     scripts: './src/scripts.js',
@@ -45,13 +30,66 @@ module.exports = {
   },
 
   plugins: [
+
     new webpack.ProgressPlugin(),
-    new MiniCssExtractPlugin({ filename: 'styles.[contenthash].css', }),
-    new HtmlWebpackPlugin({ template: 'src/index.html', }),
+
+    // new webpack.HotModuleReplacementPlugin(),
+
+    // https://habr.com/ru/post/524260/
+    // new CleanWebpackPlugin(),
+
+    new FileManagerPlugin({
+      events: {
+        onEnd: {
+          copy: [{
+            source: './trg/*.(css|js|html)',
+            destination: './docs/',
+          }],
+        },
+      },
+    }),
+
+    new MiniCssExtractPlugin({
+      filename: 'styles.css',
+    }),
+
+    // new ObfuscatorPlugin ({
+    //   compact: true,
+    //   controlFlowFlattening: true,
+    //   controlFlowFlatteningThreshold: 0.75,
+    //   identifierNamesGenerator: 'hexadecimal',
+    //   numbersToExpressions: true,
+    //   rotateStringArray: true,
+    //   simplify: true,
+    //   shuffleStringArray: true,
+    //   splitStrings: true,
+    //   splitStringsChunkLength: 3,
+    //   stringArrayThreshold: 0.75,
+    // }, []),
+
+    new HtmlWebpackPlugin({
+      template: 'src/index.html',
+    }),
+
+    new VersionFilePlugin({
+      data: {
+        date: (new Date()).toGMTString(),
+        environment: env.NODE_ENV || 'development',        
+      },
+      output: './docs/version.txt',
+      package: './package.json',
+      templateString: [
+        `Build date: <%= date %>`,
+        `Environment: <%= environment %>`,
+        `Version: <%= name %>@<%= version %>`,
+      ].join('\n'),
+    }),
+
   ],
 
   module: {
     rules: [
+
       {
         test: /\.(js|jsx)$/,
         include: [
@@ -59,6 +97,7 @@ module.exports = {
         ],
         loader: 'babel-loader'
       },
+
       {
         test: /.(sa|sc|c)ss$/,
         use: [{
@@ -71,12 +110,18 @@ module.exports = {
           options: { sourceMap: true, }
         }],
       },
+
     ],
   },
 
   devServer: {
+    // compress: true,
+    // contentBase: path.resolve(__dirname, './trg'),
+    // historyApiFallback: true,
     host: 'localhost',
+    // hot: true,
     open: true,
+    // port: 9000,
   },
 
 };

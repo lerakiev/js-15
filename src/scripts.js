@@ -15,9 +15,9 @@ window.addEventListener('load', () => {
       // https://learn.javascript.ru/drag-and-drop
       // https://habr.com/ru/post/463463/
       // https://www.w3schools.com/html/html5_draganddrop.asp
-      cell.setAttribute('draggable', true);
+      // cell.setAttribute('draggable', true);
       // TODO: addEventListener
-      cell.addEventListener('mousedown')
+      // cell.addEventListener('mousedown')
     }
     return cell;
   });

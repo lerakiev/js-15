@@ -15,11 +15,33 @@ const VersionFilePlugin = require('webpack-version-file');
 
 const ObfuscatorPlugin = require('webpack-obfuscator');
 
+// https://webdevblog.ru/optimizaciya-razmera-sborki-webpack/
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CompressionPlugin = require("compression-webpack-plugin");
+// https://github.com/darrenscerri/duplicate-package-checker-webpack-plugin
+
+// https://v4.webpack.js.org/plugins/uglifyjs-webpack-plugin/
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
 const { env } = process;
 
 module.exports = {
 
   mode: env.NODE_ENV || 'development',
+
+  cache: false,
+  
+  devServer: {
+    // compress: true,
+    // contentBase: path.resolve(__dirname, './trg'),
+    // historyApiFallback: true,
+    host: 'localhost',
+    // hot: true,
+    open: true,
+    port: 9000,
+  },
+
+  devtool: 'cheap-module-source-map',
 
   entry: {
     scripts: './src/scripts.js',
@@ -29,14 +51,53 @@ module.exports = {
     path: path.resolve(__dirname, 'trg'),
   },
 
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        // mangle: true,
+        // compress: {
+        //   warnings: false, // Suppress uglification warnings
+        //   pure_getters: true,
+        //   unsafe: true,
+        //   unsafe_comps: true,
+        //   screw_ie8: true
+        // },
+        // output: {
+        //   comments: false,
+        // },
+        // exclude: [/\.min\.js$/gi] // skip pre-minified libs
+      }),
+    ],
+  },
+
   plugins: [
+
+    new webpack.DefinePlugin({
+      ['process.env']: JSON.stringify(env),
+    }),
+
+    // new webpack.optimize.DedupePlugin(),
+
+    new webpack.IgnorePlugin(/^\.\/locale$/, [/moment$/]),
+
+    // new webpack.NoErrorsPlugin(),
+
+    // new CompressionPlugin({
+    //   asset: "[path].gz[query]",
+    //   algorithm: "gzip",
+    //   test: /\.js$|\.css$|\.html$/,
+    //   threshold: 10240,
+    //   minRatio: 0
+    // }),
 
     new webpack.ProgressPlugin(),
 
-    // new webpack.HotModuleReplacementPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+
+    new BundleAnalyzerPlugin(),
 
     // https://habr.com/ru/post/524260/
-    // new CleanWebpackPlugin(),
+    new CleanWebpackPlugin(),
 
     new FileManagerPlugin({
       events: {
@@ -112,16 +173,6 @@ module.exports = {
       },
 
     ],
-  },
-
-  devServer: {
-    // compress: true,
-    // contentBase: path.resolve(__dirname, './trg'),
-    // historyApiFallback: true,
-    host: 'localhost',
-    // hot: true,
-    open: true,
-    // port: 9000,
   },
 
 };

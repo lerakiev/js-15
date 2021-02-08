@@ -1,0 +1,1 @@
+{"version":3,"file":"styles.css","sources":["webpack://js-15/./src/css/common.scss"],"sourcesContent":["html,\nbody {\n    margin: 0;\n    padding: 0;\n    box-sizing: border-box;\n}\n\n* {\n    box-sizing: border-box;\n}\n"],"mappings":"AAAA;;","sourceRoot":""}

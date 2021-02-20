@@ -37,6 +37,31 @@ module.exports = _arrayWithoutHoles;
 
 /***/ }),
 
+/***/ "./node_modules/@babel/runtime/helpers/defineProperty.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/defineProperty.js ***!
+  \***************************************************************/
+/***/ ((module) => {
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+
+/***/ }),
+
 /***/ "./node_modules/@babel/runtime/helpers/iterableToArray.js":
 /*!****************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/iterableToArray.js ***!
@@ -116,39 +141,79 @@ module.exports = _unsupportedIterableToArray;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _styles_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./styles.scss */ "./src/styles.scss");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _styles_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./styles.scss */ "./src/styles.scss");
+
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 
 window.addEventListener('load', function () {
   var game = document.querySelector('div.game');
 
-  var cells = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(Array(16)).map(function (_, index) {
-    var cell = document.createElement('div');
-    cell.classList.add('game__cell');
+  var $shuffle = function $shuffle(cells) {
+    return cells.sort(function () {
+      return Math.random() - 0.5;
+    });
+  };
 
-    if (index) {
+  var $remove = function $remove(parent) {
+    return function (child) {
+      return parent.removeChild(child);
+    };
+  };
+
+  var $removeAll = function $removeAll(parent) {
+    return _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(parent.childNodes).map($remove(parent));
+  };
+
+  var $create = function $create(parent) {
+    return function (_ref) {
+      var _ref$empty = _ref.empty,
+          empty = _ref$empty === void 0 ? false : _ref$empty,
+          _ref$index = _ref.index,
+          index = _ref$index === void 0 ? '' : _ref$index;
+      var cell = document.createElement('div');
+      cell.classList.add('game__cell');
+      cell.dataset.empty = empty;
       cell.dataset.value = index;
-    } else {
-      cell.dataset.value = '';
-      cell.classList.add('game__cell_dnd'); // https://htmlacademy.ru/blog/boost/frontend/drag-and-drop
-      // https://developer.mozilla.org/ru/docs/Web/Guide/HTML/Drag_and_drop
-      // https://learn.javascript.ru/drag-and-drop
-      // https://habr.com/ru/post/463463/
-      // https://www.w3schools.com/html/html5_draganddrop.asp
-      // cell.setAttribute('draggable', true);
-      // TODO: addEventListener
-      // cell.addEventListener('mousedown')
-    }
 
-    return cell;
-  }); // cells.sort(() => Math.random() - 0.5);
+      if (empty) {
+        cell.classList.add('game__cell_dnd'); // https://htmlacademy.ru/blog/boost/frontend/drag-and-drop
+        // https://developer.mozilla.org/ru/docs/Web/Guide/HTML/Drag_and_drop
+        // https://learn.javascript.ru/drag-and-drop
+        // https://habr.com/ru/post/463463/
+        // https://www.w3schools.com/html/html5_draganddrop.asp
+        // cell.setAttribute('draggable', true);
+        // TODO: addEventListener
+        // cell.addEventListener('mousedown')
+      }
 
+      parent.appendChild(cell);
+      return cell;
+    };
+  };
 
-  cells.forEach(function (cell) {
-    return game.appendChild(cell);
+  var $createAll = function $createAll(parent, cells) {
+    return cells.map($create);
+  };
+
+  var cells = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(Array(16)).map(function (_, index) {
+    return _objectSpread(_objectSpread({}, !index && {
+      empty: true
+    }), index && {
+      index: index
+    });
   });
+
+  $shuffle(cells);
+  $createAll(game, cells);
 });
 
 /***/ }),
@@ -440,7 +505,7 @@ __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
     if(true) {
-      // 1613152108555
+      // 1613838377723
       var cssReload = __webpack_require__(/*! ./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js */ "./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js")(module.id, {"locals":false});
       module.hot.dispose(cssReload);
       module.hot.accept(undefined, cssReload);
@@ -536,7 +601,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("89772e55f12780ea428a")
+/******/ 		__webpack_require__.h = () => ("b860fdb3edd946699b32")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */

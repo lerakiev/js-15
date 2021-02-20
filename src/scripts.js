@@ -2,13 +2,16 @@ import './styles.scss';
 
 window.addEventListener('load', () => {
     const game = document.querySelector('div.game');
-    const cells = [...Array(16)].map((_, index) => {
+
+    const $shuffle = (cells) => cells.sort(() => Math.random() - 0.5);
+    const $remove = (parent) => (child) => parent.removeChild(child);
+    const $removeAll = (parent) => [...parent.childNodes].map($remove(parent));
+    const $create = (parent) => ({ empty = false, index = '', }) => {
         const cell = document.createElement('div');
         cell.classList.add('game__cell');
-        if (index) {
-            cell.dataset.value = index;
-        } else {
-            cell.dataset.value = '';
+        cell.dataset.empty = empty;
+        cell.dataset.value = index;
+        if (empty) {
             cell.classList.add('game__cell_dnd');
             // https://htmlacademy.ru/blog/boost/frontend/drag-and-drop
             // https://developer.mozilla.org/ru/docs/Web/Guide/HTML/Drag_and_drop
@@ -19,8 +22,17 @@ window.addEventListener('load', () => {
             // TODO: addEventListener
             // cell.addEventListener('mousedown')
         }
+        parent.appendChild(cell);
         return cell;
+    };
+    const $createAll = (parent, cells) => cells.map($create);
+
+    const cells = [...Array(16)].map((_, index) => {
+        return {
+            ...!index && { empty: true, },
+            ...index && { index, },
+        };
     });
-    // cells.sort(() => Math.random() - 0.5);
-    cells.forEach(cell => game.appendChild(cell));
+    $shuffle(cells);
+    $createAll(game, cells);
 });

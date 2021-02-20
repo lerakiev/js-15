@@ -5,7 +5,9 @@
     "main": "index.js",
     "scripts": {
         "build": "npx webpack",
-        "dev": "npx webpack serve",
+        "dev:watch": "npx webpack -w",
+        "dev:server": "npx webpack serve",
+        "docs": "npx http-server ./docs -p 9090 -i true -o / --cors",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -19,7 +21,9 @@
         "url": "https://github.com/lerakiev/js-15/issues"
     },
     "homepage": "https://github.com/lerakiev/js-15#readme",
-    "dependencies": {},
+    "dependencies": {
+        "http-server": "^0.12.3"
+    },
     "devDependencies": {
         "@babel/core": "^7.12.13",
         "@babel/plugin-proposal-class-properties": "^7.12.13",
